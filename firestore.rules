@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function userDoc() { return get(/databases/$(database)/documents/users/$(request.auth.uid)); }
+    function active() { return signedIn() && userDoc().data.active == true; }
+    function roleIs(role) { return active() && userDoc().data.role == role; }
+    function admin() { return roleIs('admin'); }
+    function editor() { return admin() || roleIs('coordenacao'); }
+    function stockRole() { return editor() || roleIs('almoxarifado'); }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || admin());
+      allow create, update, delete: if admin();
+    }
+    match /courses/{id} { allow read: if active(); allow write: if editor(); }
+    match /materials/{id} { allow read: if active(); allow create, update: if stockRole(); allow delete: if admin(); }
+    match /prices/{id} { allow read: if active(); allow write: if editor(); }
+    match /courseItems/{id} { allow read: if active(); allow write: if editor(); }
+    match /movements/{id} { allow read: if active(); allow create: if stockRole(); allow update, delete: if admin(); }
+    match /config/{id} { allow read: if active(); allow write: if admin(); }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

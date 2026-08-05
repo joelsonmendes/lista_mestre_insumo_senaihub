@@ -1,0 +1,25 @@
+# Credenciais e variáveis locais
+.env
+.env.*
+serviceAccountKey.json
+firebase-adminsdk-*.json
+
+# Dependências
+node_modules/
+
+# Cache e arquivos locais do Firebase
+.firebase/
+.firebaserc.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos compactados
+*.zip

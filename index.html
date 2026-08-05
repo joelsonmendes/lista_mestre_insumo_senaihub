@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b4f8a" />
+  <title>Lista Mestre Elétrica | SENAI Hub</title>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <section id="loginView" class="login-shell">
+    <div class="login-card">
+      <div class="brand-mark">SENAI <span>HUB</span></div>
+      <h1>Lista Mestre de Materiais</h1>
+      <p>Gestão de insumos, equipamentos, estoque e custo por curso.</p>
+      <form id="loginForm">
+        <label>E-mail<input id="loginEmail" type="email" required autocomplete="username"></label>
+        <label>Senha<input id="loginPassword" type="password" required autocomplete="current-password"></label>
+        <button class="btn primary" type="submit">Entrar</button>
+      </form>
+      <button id="demoBtn" class="btn ghost" type="button">Abrir modo demonstração</button>
+      <small>Antes do primeiro acesso, preencha <code>firebase-config.js</code>.</small>
+    </div>
+  </section>
+
+  <div id="appView" class="app hidden">
+    <aside class="sidebar">
+      <div class="logo">SENAI <b>HUB</b></div>
+      <nav id="nav">
+        <button data-page="dashboard" class="active">▦ Dashboard</button>
+        <button data-page="courses">▤ Cursos</button>
+        <button data-page="materials">◫ Materiais</button>
+        <button data-page="prices">R$ Cotações</button>
+        <button data-page="stock">⇄ Estoque</button>
+        <button data-page="reports">▧ Relatórios</button>
+        <button data-page="settings">⚙ Configurações</button>
+      </nav>
+      <div class="side-bottom">
+        <span id="userBadge">Modo demonstração</span>
+        <button id="logoutBtn" class="link-btn">Sair</button>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <button id="menuBtn" class="menu-btn">☰</button>
+        <div><h2 id="pageTitle">Dashboard</h2><p id="pageSubtitle">Visão geral da operação</p></div>
+        <div class="top-actions"><button id="seedBtn" class="btn">Carregar base inicial</button><button id="printBtn" class="btn primary">Gerar PDF</button></div>
+      </header>
+
+      <section id="dashboardPage" class="page active">
+        <div class="cards" id="kpis"></div>
+        <div class="grid two">
+          <article class="panel"><div class="panel-head"><h3>Custo por curso</h3></div><div id="courseCostChart" class="bar-chart"></div></article>
+          <article class="panel"><div class="panel-head"><h3>Distribuição por categoria</h3></div><div id="categorySummary"></div></article>
+        </div>
+        <article class="panel"><div class="panel-head"><h3>Alertas e pendências</h3></div><div id="alerts"></div></article>
+      </section>
+
+      <section id="coursesPage" class="page">
+        <div class="toolbar"><input id="courseSearch" placeholder="Buscar curso"><button id="newCourseBtn" class="btn primary">+ Novo curso</button></div>
+        <div id="courseGrid" class="course-grid"></div>
+      </section>
+
+      <section id="materialsPage" class="page">
+        <div class="toolbar wrap"><input id="materialSearch" placeholder="Buscar material, código ou especificação"><select id="materialCategory"><option value="">Todas as categorias</option></select><button id="newMaterialBtn" class="btn primary">+ Novo material</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Código</th><th>Material</th><th>Categoria</th><th>Un.</th><th>Estoque</th><th>Preço adotado</th><th>Status</th><th></th></tr></thead><tbody id="materialsBody"></tbody></table></div>
+      </section>
+
+      <section id="pricesPage" class="page">
+        <div class="notice">Cotações com fonte, data e link. Valores vencem após o prazo configurado e nunca substituem cotação formal de compra.</div>
+        <div class="toolbar"><input id="priceSearch" placeholder="Buscar material ou fornecedor"><button id="newPriceBtn" class="btn primary">+ Nova cotação</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Material</th><th>Fornecedor</th><th>Embalagem</th><th>Preço</th><th>Unitário</th><th>Consultado em</th><th>Validade</th><th>Fonte</th></tr></thead><tbody id="pricesBody"></tbody></table></div>
+      </section>
+
+      <section id="stockPage" class="page">
+        <div class="toolbar"><select id="stockMaterial"></select><select id="stockType"><option value="entrada">Entrada</option><option value="saida">Saída</option><option value="ajuste">Ajuste</option></select><input id="stockQty" type="number" min="0" step="0.01" placeholder="Quantidade"><input id="stockReason" placeholder="Motivo"><button id="stockSaveBtn" class="btn primary">Registrar</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Data</th><th>Material</th><th>Tipo</th><th>Quantidade</th><th>Motivo</th></tr></thead><tbody id="stockBody"></tbody></table></div>
+      </section>
+
+      <section id="reportsPage" class="page">
+        <div class="report-config panel"><h3>Relatório de custo por curso</h3><div class="form-grid"><label>Curso<select id="reportCourse"></select></label><label>Alunos<input id="reportStudents" type="number" value="35" min="1"></label><label>Grupos<input id="reportGroups" type="number" value="7" min="1"></label><label>Reserva técnica (%)<input id="reportWaste" type="number" value="10" min="0"></label></div><button id="generateReportBtn" class="btn primary">Calcular relatório</button></div>
+        <div id="reportOutput" class="panel report-output"></div>
+      </section>
+
+      <section id="settingsPage" class="page">
+        <div class="grid two">
+          <article class="panel"><h3>Parâmetros padrão</h3><div class="form-grid one"><label>Alunos por turma<input id="defaultStudents" type="number" value="35"></label><label>Alunos por grupo<input id="studentsPerGroup" type="number" value="5"></label><label>Validade da cotação (dias)<input id="quoteValidity" type="number" value="30"></label><label>Reserva técnica (%)<input id="defaultWaste" type="number" value="10"></label></div><button id="saveSettingsBtn" class="btn primary">Salvar configurações</button></article>
+          <article class="panel"><h3>Importação e backup</h3><p>Exporte toda a base em JSON ou importe um backup anteriormente gerado.</p><div class="stack"><button id="exportBtn" class="btn">Exportar JSON</button><label class="btn file-btn">Importar JSON<input id="importInput" type="file" accept="application/json"></label><button id="clearBtn" class="btn danger">Limpar base local</button></div></article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="modal"><form method="dialog" id="modalForm"><div class="modal-head"><h3 id="modalTitle">Cadastro</h3><button value="cancel" class="icon-btn">×</button></div><div id="modalFields" class="form-grid"></div><div class="modal-actions"><button value="cancel" class="btn">Cancelar</button><button id="modalSave" value="default" class="btn primary">Salvar</button></div></form></dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
