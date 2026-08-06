@@ -47,7 +47,7 @@
       <header class="topbar">
         <button id="menuBtn" class="menu-btn">☰</button>
         <div><h2 id="pageTitle">Dashboard</h2><p id="pageSubtitle">Visão gerencial da operação</p></div>
-        <div class="top-actions"><button id="seedBtn" class="btn">Carregar/atualizar base</button><button id="printBtn" class="btn primary">Gerar PDF</button></div>
+        <div class="top-actions"><button id="seedBtn" class="btn">Carregar/atualizar base</button><button id="spreadsheetBtn" class="btn">Gerar planilha</button><button id="printBtn" class="btn primary">Gerar PDF</button></div>
       </header>
 
       <section id="dashboardPage" class="page active">
@@ -105,7 +105,7 @@
 
       <section id="materialsPage" class="page">
         <div class="toolbar wrap"><input id="materialSearch" placeholder="Buscar material, código ou especificação"><select id="materialCategory"><option value="">Todas as categorias</option></select><button id="newMaterialBtn" class="btn primary">+ Novo material</button></div>
-        <div class="table-wrap"><table><thead><tr><th>Código</th><th>Material</th><th>Categoria</th><th>Un.</th><th>Estoque</th><th>Vida útil</th><th>Preço</th><th>Status</th><th></th></tr></thead><tbody id="materialsBody"></tbody></table></div>
+        <div class="table-wrap"><table><thead><tr><th>Código</th><th>Protheus</th><th>Material</th><th>Categoria</th><th>Un.</th><th>Estoque</th><th>Vida útil</th><th>Preço</th><th>Status</th><th></th></tr></thead><tbody id="materialsBody"></tbody></table></div>
       </section>
 
       <section id="pricesPage" class="page">
@@ -126,7 +126,35 @@
       </section>
 
       <section id="reportsPage" class="page">
-        <div class="report-config panel"><h3>Relatórios</h3><div class="form-grid"><label>Planejamento<select id="reportPlan"></select></label><label>Tipo<select id="reportType"><option value="complete">Orçamento completo</option><option value="purchase">Lista para comprar</option><option value="mobilization">Lista de mobilização</option><option value="return">Checklist de retorno</option></select></label></div><button id="generateReportBtn" class="btn primary">Gerar relatório</button></div>
+        <div class="report-config panel">
+          <h3>Relatórios e planilhas</h3>
+          <div class="form-grid">
+            <label>Planejamento<select id="reportPlan"></select></label>
+            <label>Tipo
+              <select id="reportType">
+                <option value="complete">Orçamento completo</option>
+                <option value="consumables">Somente insumos</option>
+                <option value="consumables_ppe">Insumos e EPIs</option>
+                <option value="purchase">Lista para comprar</option>
+                <option value="mobilization">Lista de mobilização</option>
+                <option value="return">Checklist de retorno</option>
+              </select>
+            </label>
+            <label>Quantidade na planilha
+              <select id="sheetQuantityMode">
+                <option value="needed">Total necessário</option>
+                <option value="buy">Quantidade para comprar</option>
+                <option value="mobilize">Quantidade para mobilizar</option>
+                <option value="wearQty">Reposição por desgaste</option>
+              </select>
+            </label>
+            <label><span>Código Protheus</span><small>Preenchido no cadastro de materiais; quando vazio, será exibido “NÃO CADASTRADO”.</small></label>
+          </div>
+          <div class="toolbar wrap">
+            <button id="generateReportBtn" class="btn primary">Gerar relatório</button>
+            <button id="exportSpreadsheetBtn" class="btn">Gerar Excel — modelo institucional</button>
+          </div>
+        </div>
         <div id="reportOutput" class="panel report-output"></div>
       </section>
 
@@ -141,6 +169,7 @@
 
   <dialog id="modal"><form method="dialog" id="modalForm"><div class="modal-head"><h3 id="modalTitle">Cadastro</h3><button value="cancel" class="icon-btn">×</button></div><div id="modalFields" class="form-grid"></div><div class="modal-actions"><button value="cancel" class="btn">Cancelar</button><button id="modalSave" value="default" class="btn primary">Salvar</button></div></form></dialog>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
